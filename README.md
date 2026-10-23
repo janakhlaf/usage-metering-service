@@ -355,7 +355,3 @@ usage-metering-service/
 The Usage Metering and Quota Service provides a configurable backend for managing subscription plans, enforcing usage limits, and recording resource consumption.
 
 It demonstrates API development, database design, quota enforcement, idempotency, concurrency handling, testing, and containerized deployment.
-
----
-
-**Foothill Final Project — Usage Metering and Quota Service**
