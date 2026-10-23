@@ -1,0 +1,44 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: quota
+      POSTGRES_PASSWORD: quota_local_dev
+      POSTGRES_DB: quota
+    ports:
+      - "127.0.0.1:5433:5432"
+    volumes:
+      - quota_data:/var/lib/postgresql/data
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U quota -d quota"]
+      interval: 3s
+      retries: 20
+
+  backend:
+    build: ./backend
+    environment:
+      DATABASE_URL: postgres://quota:quota_local_dev@db:5432/quota
+      PORT: 3000
+      ADMIN_SECRET: ${ADMIN_SECRET:?Set ADMIN_SECRET in .env}
+      DEMO_MODE: "true"
+    ports:
+      - "127.0.0.1:3000:3000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  client:
+    build: ./client
+    environment:
+      API_URL: http://backend:3000
+      ADMIN_SECRET: ${ADMIN_SECRET:?Set ADMIN_SECRET in .env}
+      DEMO_MODE: "true"
+      DEMO_API_KEY: ${DEMO_API_KEY:-}
+    ports:
+      - "127.0.0.1:8080:8080"
+    depends_on:
+      - backend
+
+volumes:
+  quota_data:

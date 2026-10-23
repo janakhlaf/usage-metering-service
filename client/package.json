@@ -1,0 +1,1 @@
+{"name":"quota-demo-client","private":true,"scripts":{"start":"node src/server.js"},"dependencies":{"express":"^4.21.2"}}
